@@ -1,0 +1,125 @@
+
+:root{--green:#28a745;--red:#e63946;--ink:#111827;--bg:#f5f7fa;--line:#e5e7eb;--sun:#ffe5e5;--fiesta:#e6f2ff;--incap:#fff6cc}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+.header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.header img{height:38px}
+.header h1{font-size:18px;margin:0;font-weight:800}
+.badge{padding:2px 8px;border-radius:999px;font-size:12px;background:#eef2ff;color:#3730a3}
+.container{max-width:1220px;margin:20px auto;padding:0 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.04)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+button{background:var(--green);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #d1d5db;color:var(--ink)}
+button.print{background:var(--red)}
+input,select{border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;background:#fff}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:center;font-size:14px}
+thead th{position:sticky;top:64px;background:#fff;z-index:1}
+tr.sunday td{background:var(--sun)}
+tr.fiesta td{background:var(--fiesta)}
+tr.incap td{background:var(--incap)}
+tfoot td{font-weight:800}
+.login{max-width:520px;margin:64px auto}
+.login .brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.login .brand img{height:44px}
+.login .card h2{margin:0 0 12px;font-size:20px;display:flex;gap:8px;align-items:center}
+.version{font-size:12px;padding:2px 8px;border-radius:999px;background:#E2E8F0;color:#111}
+.tabs{display:flex;gap:6px;margin-top:10px}
+.tab{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;cursor:pointer}
+.tab.active{background:#111827;color:#fff}
+.admin-layout{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+.admin-layout.full{grid-template-columns:1fr}
+.emp-list{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;max-height:70vh;overflow:auto}
+.emp-item{padding:8px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent;display:flex;justify-content:space-between;gap:6px}
+.emp-item.active{background:#111827;color:#fff}
+.sheet{break-inside:avoid-page}
+.page-break{page-break-before:always}
+
+/* Partes (ETT) */
+.partes .ett-page h2{display:flex;align-items:center;gap:8px;margin:0 0 8px 0;white-space:nowrap;justify-content:center}
+.person-box{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:12px}
+.person-box h4{margin:0 0 6px 0;font-size:15px}
+.triptych-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.triptych-grid table{table-layout:fixed;width:100%}
+.triptych-grid th,.triptych-grid td{font-size:12px;padding:4px 6px;border-bottom:1px solid #eee}
+.triptych-grid td.is-sunday{background:var(--sun)}
+.triptych-grid td.fiesta{background:var(--fiesta);font-weight:700}
+.triptych-grid td.incap{background:var(--incap);font-weight:700}
+.legend{font-size:12px;opacity:.8;margin-top:6px}
+
+/* PRINT */
+@media print{
+  @page{ size:A4 portrait; margin:10mm; }
+  .header,.tabs,.no-print{display:none!important}
+  .container{max-width:none!important;width:100%!important;margin:0!important;padding:0!important}
+  .card{box-shadow:none;border:none;padding:0!important;margin:0!important}
+  .emp-list{display:none!important}
+
+  /* Partes: print exactly as screen (2 páginas) */
+  .partes .ett-page{width:100%!important;padding:0 6mm}
+  .partes .summary table{table-layout:fixed;width:100%;margin:6px auto 10px auto}
+  .partes .summary th,.partes .summary td{text-align:center;white-space:nowrap}
+  .partes .summary th:nth-child(1),.partes .summary td:nth-child(1){width:60%}
+  .partes .summary th:nth-child(2),.partes .summary td:nth-child(2){width:20%}
+  .partes .summary th:nth-child(3),.partes .summary td:nth-child(3){width:20%}
+}
+
+
+/* v6.6 — Strict per-worker page breaks for batch individuals */
+.screen-only{}
+.print-only{}
+
+@media print{
+  /* Never print the on-screen selected sheet in batch mode */
+  .screen-only{ display: none !important; }
+  /* Batch container becomes visible in print via JS (removes no-print) */
+  .print-batch{ display: block !important; }
+
+  /* One worker per page */
+  .print-sheet{ break-before: page; break-after: page; page-break-before: always; page-break-after: always; }
+  .sheet{ break-inside: avoid; page-break-inside: avoid; }
+
+  /* Ensure the very first printed sheet also starts at a new page cleanly */
+  .print-sheet:first-child{ break-before: page; page-break-before: always; }
+}
+
+
+/* v6.7 — Users see Observaciones como visor (botón 'Ver') y en PDF no aparece */
+@media print{
+  /* Ocultar la última columna (Obs.) al imprimir individuales desde usuario */
+  body.print-individuals-single table thead tr th:last-child,
+  body.print-individuals-single table tbody tr td:last-child { display:none !important; }
+  /* Mantener el logo y A4 fit se hereda de versiones previas */
+}
+
+
+/* v6.9 — Observaciones editor mejorado */
+.obs-ta{
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  resize: none;
+  line-height: 1.35;
+  overflow: hidden;
+  background: #fff;
+}
+
+
+/* v6.10 — Observaciones completas con guardar/eliminar en HOJAS (Gerencia) */
+.obs-ta{
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  resize: none;
+  line-height: 1.35;
+  overflow: hidden;
+  background: #fff;
+  min-height: 40px;
+  max-height: none;
+  white-space: pre-wrap;
+}
